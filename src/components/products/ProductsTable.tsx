@@ -1,4 +1,4 @@
-// src/components/products/ProductsTable.tsx
+
 'use client';
 
 import { Product } from '@/store/productsSlice';

@@ -1,4 +1,4 @@
-// src/components/products/Pagination.tsx
+
 'use client';
 
 import { Button } from '@/components/ui/Button';

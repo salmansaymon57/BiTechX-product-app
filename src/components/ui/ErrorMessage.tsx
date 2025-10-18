@@ -1,4 +1,4 @@
-// src/components/ui/ErrorMessage.tsx
+
 import { cn } from '@/lib/utils';
 
 interface ErrorMessageProps {

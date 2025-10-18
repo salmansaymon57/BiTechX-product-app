@@ -1,4 +1,4 @@
-// src/components/products/SearchInput.tsx
+
 'use client';
 
 import { useState, useEffect } from 'react';

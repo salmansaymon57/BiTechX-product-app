@@ -1,4 +1,3 @@
-// src/store/authSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios'; // Assuming you'll use Axios for API calls
 import { AxiosError } from 'axios'; // Add AxiosError import

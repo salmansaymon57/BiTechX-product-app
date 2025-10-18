@@ -1,4 +1,3 @@
-// src/store/productsSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios, { AxiosError} from 'axios';
 import type { AuthState } from './authSlice';
@@ -225,24 +224,12 @@ const productsSlice = createSlice({
       state.totalPages = Math.max(state.totalPages, 1);
     });
 
-  // Update
-  builder
-    .addCase(updateProduct.fulfilled, (state, _action) => { // Prefix with _
-      state.loading = false;
-    });
-
-    // Delete
-    builder
-      .addCase(deleteProduct.fulfilled, (state, action) => {
-        // Use local reducer for delete
-        state.loading = false;
-      });
-      // In src/store/productsSlice.ts, update extraReducers for delete
+ 
+    
+      
     builder
       .addCase(deleteProduct.fulfilled, (state, _action) => {
-    // Already removed optimistically; just clear loading
-    state.loading = false;
-    // Optional: Refetch if needed, but since we dispatch fetch after, it's covered
+        state.loading = false;
       });
 
     builder.addCase(updateProduct.fulfilled, (state, _action) => { 

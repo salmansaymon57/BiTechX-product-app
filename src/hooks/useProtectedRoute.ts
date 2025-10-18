@@ -1,4 +1,4 @@
-// src/hooks/useProtectedRoute.ts
+
 'use client';
 
 import { useEffect } from 'react';

@@ -1,4 +1,4 @@
-// src/components/ui/Loader.tsx
+
 import { cn } from '@/lib/utils';
 
 interface LoaderProps {

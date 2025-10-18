@@ -1,4 +1,4 @@
-// src/components/products/ProductForm.tsx
+
 'use client';
 
 import { useEffect } from 'react'; // Add this import

@@ -1,4 +1,4 @@
-// src/components/providers.tsx
+
 'use client';
 
 import { Provider } from 'react-redux';
