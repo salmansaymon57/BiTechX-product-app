@@ -79,9 +79,9 @@ export const fetchProducts = createAsyncThunk<
 
     
   } catch (error) {
-    const err = error as AxiosError<{ message?: string }>;
-    console.error('Fetch error:', err); // Debug
-    return rejectWithValue(err.response?.data?.message || 'Failed to fetch products');
+  const err = error as AxiosError<{ message?: string }>; // Fix: Type guard
+  return rejectWithValue(err.response?.data?.message || 'Failed to fetch products');
+
   }
 });
 
@@ -101,9 +101,9 @@ export const createProduct = createAsyncThunk<
     });
     return response.data;
   } catch (error) {
-    const err = error as AxiosError<{ message?: string }>;
-    return rejectWithValue(err.response?.data?.message || 'Failed to create product');
-  }
+  const err = error as AxiosError<{ message?: string }>; // Fix: Type guard
+  return rejectWithValue(err.response?.data?.message || 'Failed to create product');
+}
 });
 
 // updateProduct:
@@ -122,9 +122,9 @@ export const updateProduct = createAsyncThunk<
     });
     return response.data;
   } catch (error) {
-    const err = error as AxiosError<{ message?: string }>;
-    return rejectWithValue(err.response?.data?.message || 'Failed to update product');
-  }
+  const err = error as AxiosError<{ message?: string }>; // Fix: Type guard
+  return rejectWithValue(err.response?.data?.message || 'Failed to update products');
+}
 });
 
 // deleteProduct:
@@ -143,9 +143,9 @@ export const deleteProduct = createAsyncThunk<
     });
     return id;
   } catch (error) {
-    const err = error as AxiosError<{ message?: string }>;
-    return rejectWithValue(err.response?.data?.message || 'Failed to delete product');
-  }
+  const err = error as AxiosError<{ message?: string }>; // Fix: Type guard
+  return rejectWithValue(err.response?.data?.message || 'Failed to delete products');
+}
 });
 
 // fetchSingleProduct:
@@ -227,23 +227,16 @@ const productsSlice = createSlice({
       });
 
     // Create
-  builder
-    .addCase(createProduct.fulfilled, (state, _action) => { // Prefix with _
-      state.products.unshift(_action.payload);
-      state.totalPages = Math.max(state.totalPages, 1);
-    });
-
- 
-    
-      
-    builder
-      .addCase(deleteProduct.fulfilled, (state, _action) => {
-        state.loading = false;
-      });
-
-    builder.addCase(updateProduct.fulfilled, (state, _action) => { 
-      state.loading = false;
-    });  
+  builder.addCase(createProduct.fulfilled, (state, _action) => { // Prefix _
+  state.products.unshift(_action.payload);
+  state.totalPages = Math.max(state.totalPages, 1);
+})
+builder.addCase(updateProduct.fulfilled, (state, _action) => { // Prefix _
+  state.loading = false;
+})
+builder.addCase(deleteProduct.fulfilled, (state, _action) => { // Prefix _
+  state.loading = false;
+});
 
     // Single fetch
     builder

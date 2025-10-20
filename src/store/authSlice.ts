@@ -48,9 +48,9 @@ export const login = createAsyncThunk<
       email: credentials.email
     };
   } catch (error) {
-    const err = error as AxiosError<{ message?: string }>;
-    return rejectWithValue(err.response?.data?.message || 'Login failed. Check API connection.');
-  }
+  const err = error as AxiosError<{ message?: string }>; // Fix: Type guard
+  return rejectWithValue(err.response?.data?.message || 'Login failed');
+}
 });
 
 
