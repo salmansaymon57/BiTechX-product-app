@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api', // Adjust to your API
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://68f5810a6b852b1d6f1442ce.mockapi.io', // Adjust to your API
   timeout: 10000,
 });
 

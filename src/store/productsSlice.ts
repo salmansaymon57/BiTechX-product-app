@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios, { AxiosError} from 'axios';
+import  { AxiosError} from 'axios';
 import type { AuthState } from './authSlice';
+import api from '@/lib/api';
+import { RootState } from '.';
 
 // Define types (adjust based on your API)
 export interface Product {
@@ -49,29 +51,36 @@ export interface Product {
   imageUrl?: string; 
 }
 
-// Async thunks
-// In productsSlice.ts, update fetchProducts thunk (and others)
+// In fetchProducts (replace params/response)
 export const fetchProducts = createAsyncThunk<
   { products: Product[]; totalPages: number },
   FetchProductsParams,
   { rejectValue: string }
 >('products/fetchProducts', async ({ page = 1, search = '' }, { rejectWithValue, getState }) => {
   try {
-    const state = getState() as { auth: AuthState };
+    const state = getState() as RootState;
     const token = state.auth.token;
     if (!token) return rejectWithValue('No auth token');
 
-    const params = new URLSearchParams({ page: page.toString() });
-    if (search) params.append('search', search);
-    const response = await axios.get(`/products?${params}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+
+    const params = new URLSearchParams({ page: page.toString(), limit: '10' });
+    if (search) {
+      params.append('name', search);
+    }
+    console.log('Fetching products with params:', params.toString());
+
+    const response = await api.get(`/products?${params.toString()}`);
+    console.log('Products response:', response.data);
+
     return {
-      products: response.data.products || [],
-      totalPages: response.data.totalPages || 1,
+    products: response.data || [],
+    totalPages: 10 // response.data.length ? Math.ceil(10 / 10) : 1
     };
+
+    
   } catch (error) {
-    const err = error as AxiosError<{ message?: string }>; // Type guard
+    const err = error as AxiosError<{ message?: string }>;
+    console.error('Fetch error:', err); // Debug
     return rejectWithValue(err.response?.data?.message || 'Failed to fetch products');
   }
 });
@@ -87,7 +96,7 @@ export const createProduct = createAsyncThunk<
     const token = state.auth.token;
     if (!token) return rejectWithValue('No auth token');
 
-    const response = await axios.post('/products', productData, {
+    const response = await api.post('/products', productData, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -108,7 +117,7 @@ export const updateProduct = createAsyncThunk<
     const token = state.auth.token;
     if (!token) return rejectWithValue('No auth token');
 
-    const response = await axios.put(`/products/${id}`, data, {
+    const response = await api.put(`/products/${id}`, data, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
@@ -129,7 +138,7 @@ export const deleteProduct = createAsyncThunk<
     const token = state.auth.token;
     if (!token) return rejectWithValue('No auth token');
 
-    await axios.delete(`/products/${id}`, {
+    await api.delete(`/products/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return id;
@@ -150,7 +159,7 @@ export const fetchSingleProduct = createAsyncThunk<
     const token = state.auth.token;
     if (!token) return rejectWithValue('No auth token');
 
-    const response = await axios.get(`/products/${id}`, {
+    const response = await api.get(`/products/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;

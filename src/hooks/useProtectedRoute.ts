@@ -1,4 +1,4 @@
-
+// src/hooks/useProtectedRoute.ts
 'use client';
 
 import { useEffect } from 'react';
@@ -13,7 +13,6 @@ export function useProtectedRoute() {
   useEffect(() => {
     if (!token) {
       router.push('/login');
-      router.refresh(); // Force reload if needed
     }
-  }, [token, router]);
+  }, [token, router]); // Already has token dep—ensures re-run on set
 }

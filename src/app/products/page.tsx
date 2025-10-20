@@ -8,9 +8,9 @@ import Link from 'next/link';
 import { RootState, AppDispatch } from '@/store';
 import { fetchProducts, deleteProduct, setCurrentPage, deleteProductLocal } from '@/store/productsSlice';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
-import { ProductsTable } from '@/components/products/ProductsTable';
-import { SearchInput } from '@/components/products/SearchInput';
-import { Pagination } from '@/components/products/Pagination';
+import { ProductsTable } from '@/app/products/ProductsTable';
+import { SearchInput } from '@/app/products/SearchInput';
+import { Pagination } from '@/app/products/Pagination';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Loader } from '@/components/ui/Loader';
@@ -29,11 +29,12 @@ export default function ProductsPage() {
   const [productToDelete, setProductToDelete] = useState<string | null>(null);
 
   // Initial fetch on mount
-  useEffect(() => {
-    if (token) {
-      dispatch(fetchProducts({ page: currentPage, search: searchTerm }));
-    }
-  }, [currentPage, dispatch, searchTerm, token]); // Fix: Add missing deps
+ useEffect(() => {
+  console.log('Products useEffect: token=', token, 'page=', currentPage, 'search=', searchTerm);
+  if (token) {
+    dispatch(fetchProducts({ page: currentPage, search: searchTerm }));
+  }
+}, [token, currentPage, searchTerm, dispatch]);
 
   const handleEdit = (id: string) => {
     router.push(`/products/edit/${id}`);

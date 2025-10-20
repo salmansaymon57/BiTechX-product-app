@@ -1,20 +1,20 @@
-
+// src/app/login/page.tsx (full corrected file)
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; // Ensure useEffect imported
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import { login } from '@/store/authSlice';
-import { RootState, AppDispatch } from '@/store'; // Add AppDispatch import
+import { RootState, AppDispatch } from '@/store';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState('symansalman@gmail.com'); // Pre-fill
   const [localError, setLocalError] = useState('');
-  const dispatch = useDispatch<AppDispatch>(); // Explicitly type as AppDispatch
+  const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-  const { loading, error } = useSelector((state: RootState) => state.auth);
+  const { loading, error, token } = useSelector((state: RootState) => state.auth); // Select token at component level
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,13 +23,20 @@ export default function Login() {
       setLocalError('Please enter a valid email');
       return;
     }
-    const resultAction = await dispatch(login({ email })); // Now TS knows this is thunk-compatible
+    const resultAction = await dispatch(login({ email }));
     if (login.fulfilled.match(resultAction)) {
-      router.push('/products');
+      // No redirect here—useEffect handles it
     } else {
       setLocalError(error || 'Login failed');
     }
   };
+
+  // Move useEffect to component body (top-level, not inside handleSubmit or conditional)
+  useEffect(() => {
+    if (token && !loading) {
+      router.push('/products');
+    }
+  }, [token, loading, router]); // Watch token and loading to avoid premature redirect
 
   if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
 

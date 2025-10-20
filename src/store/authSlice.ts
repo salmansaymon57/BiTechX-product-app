@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios'; // Assuming you'll use Axios for API calls
+import api from '@/lib/api';
 import { AxiosError } from 'axios'; // Add AxiosError import
 
 // Define types
@@ -19,20 +19,41 @@ interface AuthResponse {
   email: string; // Assuming API returns email back
 }
 
-// Async thunk for login
+
 export const login = createAsyncThunk<
   AuthResponse,
   LoginCredentials,
   { rejectValue: string }
 >('auth/login', async (credentials, { rejectWithValue }) => {
   try {
-    const response = await axios.post('/auth', credentials); // Replace with your API base URL
-    return response.data;
+    // GET all auth entries from /auth
+    const response = await api.get('/auth');
+    const authEntries = response.data; // Array of { email: string, ... } from MockAPI
+
+    // Validate: Check if submitted email matches the allowed one (exact match)
+    const allowedEmail = 'symansalman@gmail.com';
+    if (credentials.email !== allowedEmail) {
+      return rejectWithValue(`Invalid email. Only ${allowedEmail} is allowed to login.`);
+    }
+
+    // Optional: Verify email exists in fetched data (for demo realism)
+    const userEntry = authEntries.find((entry: any) => entry.email === credentials.email);
+    if (!userEntry) {
+      return rejectWithValue('Email not found in auth records.');
+    }
+
+    // Return mock response (token hardcoded; real API would provide)
+    return {
+      token: 'mock-jwt-token-123', // Or userEntry.token if your MockAPI has it
+      email: credentials.email
+    };
   } catch (error) {
-    const err = error as AxiosError<{ message?: string }>; // Type guard to avoid 'any'
-    return rejectWithValue(err.response?.data?.message || 'Login failed');
+    const err = error as AxiosError<{ message?: string }>;
+    return rejectWithValue(err.response?.data?.message || 'Login failed. Check API connection.');
   }
 });
+
+
 
 const initialState: AuthState = {
   token: null,
